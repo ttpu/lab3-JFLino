@@ -1,32 +1,53 @@
-
 #define BTN 33
-
 #define RED 4
 #define GRN 5
 #define YLW 19
 #define BLU 22
 
 void setup() {
-  // configure button as input
   pinMode(BTN, INPUT);
-  // configure serial port speed
+
   Serial.begin(115200);
+
+  //LED configurations
+  pinMode(RED, OUTPUT);
+  pinMode(GRN, OUTPUT);
+  pinMode(YLW, OUTPUT);
+  pinMode(BLU, OUTPUT);
+
 }
 
 void loop() {
-  // this variable keeps the counting number of button pressed event
-  static int count = 0;
-  // this variable keeps its value even the function is called multiple times
+  static int count;
   static int prev_btn = LOW;
-  // read current button state (HIGH means pressed)
-  int btn = digitalRead(BTN);
 
-  // detect button pressed event
-  if (btn == HIGH && prev_btn == LOW){
+  int btn = digitalRead(BTN);
+  //detect button pressed moment
+  if(btn == HIGH && prev_btn == LOW){
     count++;
     Serial.println(count);
+
+    digitalWrite(RED, LOW);
+    digitalWrite(GRN, LOW);
+    digitalWrite(YLW, LOW);
+    digitalWrite(BLU, LOW);
+    
+    if (count == 1) {
+      digitalWrite(RED, HIGH);
+    } else if(count == 2){
+      digitalWrite(GRN, HIGH);
+    } else if(count == 3){
+      digitalWrite(YLW, HIGH);
+    } else if(count == 4){
+      digitalWrite(BLU, HIGH);
+    }
+
+    if(count >= 5){
+      count = 0;
+    }
+    
   }
-  // save current btn state into a variable to be used in next loop iteration
+
   prev_btn = btn;
-  
+  delay(100);
 }
