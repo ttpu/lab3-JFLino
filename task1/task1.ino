@@ -7,8 +7,8 @@
 #define YLW 19
 #define BLU 22
 
-const char* ssid = "#Turin.uz";
-const char* pass = "Turin_2024@!";
+const char* ssid = "Jurat";
+const char* pass = "3nuuad55ycu43fn";
 
 WiFiClient wifi_client;
 PubSubClient mqtt_client(wifi_client);
@@ -58,6 +58,7 @@ void loop() {
       Serial.print("mqtt connected: ");
       Serial.println(mres);
       mqtt_client.subscribe("ttpu/edacs/lab4");
+      mqtt_client.subscribe("ttpu/edacs/fuadov");
       mqtt_client.publish("ttpu/edacs/msg", "hello fuadov");
     }else{
       Serial.print("mqtt NOT connected, trying ... ");
@@ -77,24 +78,27 @@ void loop() {
     count++;
     Serial.println(count);
 
-    digitalWrite(RED, LOW);
-    digitalWrite(GRN, LOW);
-    digitalWrite(YLW, LOW);
-    digitalWrite(BLU, LOW);
+    // digitalWrite(RED, LOW);
+    // digitalWrite(GRN, LOW);
+    // digitalWrite(YLW, LOW);
+    // digitalWrite(BLU, LOW);
     
-    if (count == 1) {
-      digitalWrite(RED, HIGH);
-    } else if(count == 2){
-      digitalWrite(GRN, HIGH);
-    } else if(count == 3){
-      digitalWrite(YLW, HIGH);
-    } else if(count == 4){
-      digitalWrite(BLU, HIGH);
-    }
+    // if (count == 1) {
+    //   digitalWrite(RED, HIGH);
+    // } else if(count == 2){
+    //   digitalWrite(GRN, HIGH);
+    // } else if(count == 3){
+    //   digitalWrite(YLW, HIGH);
+    // } else if(count == 4){
+    //   digitalWrite(BLU, HIGH);
+    // }
 
     if(count >= 5){
       count = 0;
     }
+
+    String countmsg = String(count);
+    mqtt_client.publish("ttpu/edacs/takhirov", countmsg.c_str());
     
   }
 
@@ -103,5 +107,33 @@ void loop() {
 }
 
 void my_callback(char* topic, byte* payload, unsigned int len){
-  Serial.println("Msg received");
+  String msg;
+  for(int i = 0; i <len; i++){
+    msg+= (char)payload[i];
+  }
+  Serial.print("Topic: ");
+  Serial.println(topic);
+
+  Serial.print("Messsage: ");
+  Serial.println(msg);
+
+  String topicStr = String(topic);
+  
+  if(topicStr == "ttpu/edacs/fuadov"){
+
+    if(msg == "0"){
+      digitalWrite(RED, LOW);
+      digitalWrite(GRN, LOW);
+      digitalWrite(YLW, LOW);
+      digitalWrite(BLU, LOW);
+    }else if(msg == "1"){
+      digitalWrite(RED, HIGH);
+    }  else if(msg == "2"){
+      digitalWrite(GRN, HIGH);
+    } else if(msg == "3"){
+      digitalWrite(YLW, HIGH);
+    }else if(msg == "4"){
+      digitalWrite(BLU, HIGH);
+    }
+  }
 }
